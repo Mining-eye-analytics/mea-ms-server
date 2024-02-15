@@ -1,0 +1,831 @@
+---
+swagger: "2.0"
+info:
+  version: "1.0"
+  title: "mea-ms"
+  contact: {}
+host: "10.10.10.66:8000"
+basePath: "/"
+tags:
+- name: "Users"
+- name: "Cctvs"
+- name: "Analytics"
+- name: "Deviations"
+schemes:
+- "https"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+security: []
+paths:
+  /users/login:
+    post:
+      tags:
+      - "Users"
+      summary: "Login"
+      operationId: "login"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "Authorization"
+        in: "header"
+        required: false
+        type: "string"
+        default: "Bearer {token}"
+      - name: "username"
+        in: "formData"
+        description: ""
+        required: true
+        type: "string"
+      - name: "password"
+        in: "formData"
+        description: ""
+        required: true
+        type: "string"
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.users_controller"
+  /users/create:
+    post:
+      tags:
+      - "Users"
+      summary: "Register"
+      operationId: "register"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "Authorization"
+        in: "header"
+        required: false
+        type: "string"
+        default: "Bearer {token}"
+      - name: "company"
+        in: "formData"
+        description: ""
+        required: true
+        type: "string"
+      - name: "full_name"
+        in: "formData"
+        description: ""
+        required: true
+        type: "string"
+      - name: "username"
+        in: "formData"
+        description: ""
+        required: true
+        type: "string"
+      - name: "role"
+        in: "formData"
+        description: ""
+        required: true
+        type: "string"
+      - name: "password"
+        in: "formData"
+        description: ""
+        required: true
+        type: "string"
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.users_controller"
+  /users:
+    get:
+      tags:
+      - "Users"
+      summary: "Users"
+      operationId: "users"
+      produces:
+      - "application/json"
+      parameters: []
+      security: []
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.users_controller"
+  /users/{id}:
+    get:
+      tags:
+      - "Users"
+      summary: "Detail User"
+      operationId: "detail_user"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      security: []
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.users_controller"
+    put:
+      tags:
+      - "Users"
+      summary: "Update User"
+      operationId: "update_user"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "company"
+        in: "formData"
+        description: ""
+        required: false
+        type: "string"
+      - name: "full_name"
+        in: "formData"
+        description: ""
+        required: false
+        type: "string"
+      - name: "username"
+        in: "formData"
+        description: ""
+        required: false
+        type: "string"
+      - name: "role"
+        in: "formData"
+        description: ""
+        required: false
+        type: "string"
+      security: []
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.users_controller"
+    delete:
+      tags:
+      - "Users"
+      summary: "Delete User"
+      operationId: "delete_user"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      security: []
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.users_controller"
+  /users/{username}/exists:
+    get:
+      tags:
+      - "Users"
+      summary: "Check Username"
+      operationId: "check_username"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "username"
+        in: "path"
+        required: true
+        type: "string"
+      security: []
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.users_controller"
+  /cctvs/create:
+    post:
+      tags:
+      - "Cctvs"
+      summary: "Create Cctv"
+      operationId: "create_cctv"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "link_rtsp"
+        in: "formData"
+        description: ""
+        required: true
+        type: "string"
+      - name: "name"
+        in: "formData"
+        description: ""
+        required: true
+        type: "string"
+      - name: "location"
+        in: "formData"
+        description: ""
+        required: true
+        type: "string"
+      - name: "ip"
+        in: "formData"
+        description: ""
+        required: true
+        type: "string"
+      - name: "username"
+        in: "formData"
+        description: ""
+        required: true
+        type: "string"
+      - name: "password"
+        in: "formData"
+        description: ""
+        required: true
+        type: "string"
+      security: []
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.cctvs_controller"
+  /cctvs:
+    get:
+      tags:
+      - "Cctvs"
+      summary: "Cctvs"
+      operationId: "cctvs"
+      produces:
+      - "application/json"
+      parameters: []
+      security: []
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.cctvs_controller"
+  /cctvs/{id}:
+    get:
+      tags:
+      - "Cctvs"
+      summary: "Detail Cctv"
+      operationId: "detail_cctv"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      security: []
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.cctvs_controller"
+    put:
+      tags:
+      - "Cctvs"
+      summary: "Update Cctv"
+      operationId: "update_cctv"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "link_rtsp"
+        in: "formData"
+        description: ""
+        required: false
+        type: "string"
+      - name: "name"
+        in: "formData"
+        description: ""
+        required: false
+        type: "string"
+      - name: "location"
+        in: "formData"
+        description: ""
+        required: false
+        type: "string"
+      - name: "ip"
+        in: "formData"
+        description: ""
+        required: false
+        type: "string"
+      - name: "username"
+        in: "formData"
+        description: ""
+        required: false
+        type: "string"
+      - name: "password"
+        in: "formData"
+        description: ""
+        required: false
+        type: "string"
+      security: []
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.cctvs_controller"
+    delete:
+      tags:
+      - "Cctvs"
+      summary: "Delete Cctv"
+      operationId: "delete_cctv"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      security: []
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.cctvs_controller"
+  /analytics/{id}/video_feed:
+    get:
+      tags:
+      - "Analytics"
+      summary: "Generate Frame"
+      operationId: "generate_frame"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      security: []
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.analytics_controller"
+  /analytics/{id}/type_analytics:
+    get:
+      tags:
+      - "Analytics"
+      summary: "Get Type Analytics"
+      operationId: "get_type_analytics"
+      produces:
+      - "application/json"
+      parameters: []
+      security: []
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.analytics_controller"
+    post:
+      tags:
+      - "Analytics"
+      summary: "Set Type Analytics"
+      operationId: "set_type_analytics"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      - in: "body"
+        name: "Body"
+        description: ""
+        required: true
+        schema:
+          $ref: "#/definitions/SetTypeAnalyticsRequest"
+      security: []
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.analytics_controller"
+  /analytics/list:
+    get:
+      tags:
+      - "Analytics"
+      summary: "List Type Analytics"
+      operationId: "list_type_analytics"
+      produces:
+      - "application/json"
+      parameters: []
+      security: []
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.analytics_controller"
+  /analytics/{pathImage}:
+    get:
+      tags:
+      - "Analytics"
+      summary: "Get Image assets"
+      operationId: "get_imageassets"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "pathImages"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      security: []
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.analytics_controller"
+  /analytics/{id}/polygon:
+    get:
+      tags:
+      - "Analytics"
+      summary: "Get Polygon Points"
+      operationId: "get_polygon_points"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      security: []
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.analytics_controller"
+    post:
+      tags:
+      - "Analytics"
+      summary: "Set Polygon Points"
+      operationId: "set_polygon_points"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      - in: "body"
+        name: "Body"
+        description: ""
+        required: true
+        schema:
+          $ref: "#/definitions/SetPolygonPointsRequest"
+      security: []
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.analytics_controller"
+  /analytics/{id}/distance_hd:
+    get:
+      tags:
+      - "Analytics"
+      summary: "Get Distance HD"
+      operationId: "get_distance_hd"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      security: []
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.analytics_controller"
+    post:
+      tags:
+      - "Analytics"
+      summary: "Set Distance HD"
+      operationId: "set_distance_hd"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      - in: "body"
+        name: "Body"
+        description: ""
+        required: true
+        schema:
+          $ref: "#/definitions/SetDistanceHDRequest"
+      security: []
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.analytics_controller"
+  /deviations:
+    get:
+      tags:
+      - "Deviations"
+      summary: "Realtime Deviations"
+      operationId: "realtime_deviations"
+      produces:
+      - "application/json"
+      parameters: []
+      security: []
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.deviations_controller"
+  /deviations/{id}:
+    get:
+      tags:
+      - "Deviations"
+      summary: "Detail Realtime Deviations"
+      operationId: "detail_realtime_deviations"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      security: []
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.deviations_controller"
+    put:
+      tags:
+      - "Deviations"
+      summary: "Update Realtime Deviations"
+      operationId: "update_realtime_deviations"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "type_validation"
+        in: "formData"
+        description: ""
+        required: true
+        type: "boolean"
+      - name: "comment"
+        in: "formData"
+        description: ""
+        required: true
+        type: "string"
+      - name: "user_id"
+        in: "formData"
+        description: ""
+        required: true
+        type: "integer"
+        format: "int32"
+      security: []
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.deviations_controller"
+  /deviations/ri:
+    get:
+      tags:
+      - "Deviations"
+      summary: "Realtime Images"
+      operationId: "realtime_images"
+      produces:
+      - "application/json"
+      parameters: []
+      security: []
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.deviations_controller"
+  /deviations/ri/{id}:
+    get:
+      tags:
+      - "Deviations"
+      summary: "Detail Realtime Images"
+      operationId: "detail_realtime_images"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      security: []
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.deviations_controller"
+  /deviations/list-type-object:
+    get:
+      tags:
+      - "Deviations"
+      summary: "List Type Object"
+      operationId: "list_type_object"
+      produces:
+      - "application/json"
+      parameters: []
+      security: []
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.deviations_controller"
+  /deviations/v1:
+    get:
+      tags:
+      - "Deviations"
+      summary: "Deviations"
+      operationId: "deviations"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "cctv_id"
+        in: "query"
+        description: ""
+        required: false
+        type: "integer"
+        format: "int32"
+      - name: "filter_notification"
+        in: "query"
+        description: ""
+        required: false
+        type: "string"
+      - name: "type_object"
+        in: "query"
+        description: ""
+        required: false
+        type: "string"
+      - name: "limit"
+        in: "query"
+        description: ""
+        required: false
+        type: "integer"
+        format: "int32"
+      security: []
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.deviations_controller"
+  /deviations/v2:
+    get:
+      tags:
+      - "Deviations"
+      summary: "Deviations with Child"
+      operationId: "deviationswith_child"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "cctv_id"
+        in: "query"
+        description: ""
+        required: false
+        type: "integer"
+        format: "int32"
+      - name: "filter_notification"
+        in: "query"
+        description: ""
+        required: false
+        type: "string"
+      - name: "type_object"
+        in: "query"
+        description: ""
+        required: false
+        type: "string"
+      - name: "limit"
+        in: "query"
+        description: ""
+        required: false
+        type: "integer"
+        format: "int32"
+      security: []
+      deprecated: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      x-swagger-router-controller: "swagger_server.controllers.deviations_controller"
+securityDefinitions: {}
+definitions:
+  SetTypeAnalyticsRequest:
+    type: "object"
+    required:
+    - "type_analytics"
+    properties:
+      type_analytics:
+        type: "string"
+    title: "SetTypeAnalyticsRequest"
+    example:
+      type_analytics: "AnalyticsThreeClass"
+  SetPolygonPointsRequest:
+    type: "object"
+    required:
+    - "object_perimeter"
+    - "outside_secure_area"
+    - "polygon"
+    properties:
+      polygon:
+        type: "array"
+        items:
+          type: "array"
+          items:
+            type: "integer"
+            format: "int32"
+      outside_secure_area:
+        type: "boolean"
+      object_perimeter:
+        type: "array"
+        items:
+          type: "string"
+    title: "SetPolygonPointsRequest"
+    example:
+      polygon:
+      - - 0
+        - 100
+      - - 100
+        - 0
+      - - 0
+        - 200
+      - - 100
+        - 200
+      outside_secure_area: true
+      object_perimeter:
+      - "Person"
+  SetDistanceHDRequest:
+    type: "object"
+    required:
+    - "distance_hd"
+    properties:
+      distance_hd:
+        type: "integer"
+        format: "int32"
+    title: "SetDistanceHDRequest"
+    example:
+      distance_hd: 4

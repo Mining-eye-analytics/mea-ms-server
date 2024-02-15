@@ -1,0 +1,94 @@
+_format_version: "2.1"
+
+services:
+  - name: kong_cctvs
+    url: http://cctvs-mea:5102
+    routes:
+      - name: cctvs
+        paths:
+          - /cctvs
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+
+  - name: kong_users
+    url: http://users-mea:5101
+    routes:
+      - name: users
+        paths:
+          - /users
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+
+  - name: kong_analytics
+    url: http://analytics-mea:5103
+    routes:
+      - name: analytics
+        paths:
+          - /analytics
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+
+  - name: kong_deviations
+    url: http://deviations-mea:5104
+    routes:
+      - name: deviations
+        paths:
+          - /deviations
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+
+  - name: kong_dashboards
+    url: http://dashboards-mea:5105
+    routes:
+      - name: dashboards
+        paths:
+          - /dashboards
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+
+plugins:
+  - name: cors
+    config: 
+      origins:
+      - "*"
+      methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - OPTIONS
+      headers:
+      - Accept
+      - Accept-Version
+      - Authorization
+      - Content-Length
+      - Content-MD5
+      - Content-Type
+      - Date
+      credentials: true
+      max_age: 3600
+  # - name: request-size-limiting
+  #   service: kong_analytics
+  #   config:
+  #     allowed_payload_size: 256
+  #     require_content_length: false

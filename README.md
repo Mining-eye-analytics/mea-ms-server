@@ -1,1 +1,1 @@
-# mea-ms-server
+# mea-ms

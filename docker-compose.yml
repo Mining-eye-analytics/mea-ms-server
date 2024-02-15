@@ -1,0 +1,254 @@
+version: "3.8"
+
+services:
+  users-mea:
+    container_name: users-mea
+    image: mea-ms-users-mea
+    # build:
+    #   context: ./users
+    #   dockerfile: Dockerfile
+    ports: 
+      - 5101:5101
+    environment:
+      - CONFIGURATION_SETUP=application.config.config.ProductionConfig
+      - SECRET_KEY=u56nOPcT_7v_6xs0fMiwVw
+
+      - DATABASE_HOST=db_users
+      - DATABASE_PORT=3306
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=masterroot
+      - DATABASE_NAME=mea_users
+
+      - API_URL_LOGIN=http://hseautomation.beraucoal.co.id/beats/api/mobile/login
+      - API_KEY_LOGIN=eyJhbGciOiJIUzI1NiJ9.eyJpZEthcnlhd2FuIjo0Mzg4NCwiaWQiOjIsImVtYWlsIjoiYXJpZi53aWR5YUBiZXJhdWNvYWwuY28uaWQiLCJ1c2VybmFtZSI6IkxTREVWIn0.ZgYBPYZgx5CdJAMm29T6_0Es5C199PULqOfwMwdGFz8
+      - TZ=Asia/Makassar
+    depends_on:
+      - db_users
+    links:
+      - db_users:db_users
+    networks:
+      - kong_users
+      - conn_network
+    restart: always
+
+  cctvs-mea:
+    container_name: cctvs-mea
+    image: mea-ms-cctvs-mea
+    # build:
+    #   context: ./cctvs
+      # dockerfile: Dockerfile
+    ports: 
+      - 5102:5102
+    environment:
+      - CONFIGURATION_SETUP=application.config.config.ProductionConfig
+      - SECRET_KEY=lWn6Wgp6ZhvU7UOaiDlNtg
+
+      - DATABASE_HOST=db_cctvs
+      - DATABASE_PORT=3306
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=masterroot
+      - DATABASE_NAME=mea_cctvs
+
+      - API_USER=http://users-mea:5101
+      - SECRET_KEY_USER=u56nOPcT_7v_6xs0fMiwVw
+      - TZ=Asia/Makassar
+    networks:
+      - kong_cctvs
+      - conn_network
+    depends_on:
+      - users-mea
+      - db_cctvs
+    links:
+      - db_cctvs:db_cctvs
+    restart: always
+
+  analytics-mea:
+    container_name: analytics-mea
+    image: mea-ms-analytics-mea
+    # build:
+    #   context: ./analytics
+    #   dockerfile: Dockerfile
+    command: python3 run.py
+    ports: 
+      - 5103:5103
+    environment:
+      - CONFIGURATION_SETUP=application.config.config.ProductionConfig
+      - SECRET_KEY=lWn6Wgp6ZhvU7UOaiDlNtg
+
+      - DATABASE_HOST=db_deviations
+      - DATABASE_PORT=3306
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=masterroot
+      - DATABASE_NAME=mea_deviations
+
+      - API_USER=http://users-mea:5101
+      - SECRET_KEY_USER=u56nOPcT_7v_6xs0fMiwVw
+
+      - API_CCTV=http://cctvs-mea:5102
+      - SECRET_KEY_CCTV=lWn6Wgp6ZhvU7UOaiDlNtg
+
+      # ml
+      - TEXT_VERTIKAL=600
+      - TEXT_HORIZONTAL=585
+
+      - SAVE_STREAMING_TO_DATABASE=True
+      - SAVE_IMAGES_STREAMING=True
+
+      - SAVE_PERSON_TO_DATABASE=True
+      - SAVE_HD_TO_DATABASE=True
+      - SAVE_LV_TO_DATABASE=True
+
+      - TELEGRAM_PERSON=
+      - TELEGRAM_HD=
+      - TELEGRAM_LV=
+      - TZ=Asia/Makassar
+    networks:
+      - kong_analytics
+      - conn_network
+    
+    volumes:
+      ### dipilih aja mau pake mount yang mana
+      - ./assets:/app/application/assets
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+    depends_on:
+      - cctvs-mea
+      - db_deviations
+    links:
+      - db_deviations:db_deviations
+    restart: always
+
+  deviations-mea:
+    container_name: deviations-mea
+    image: mea-ms-deviations-mea
+    # build:
+    #   context: ./deviations
+    #   dockerfile: Dockerfile
+    ports: 
+      - 5104:5104
+    environment:
+      - CONFIGURATION_SETUP=application.config.config.ProductionConfig
+      - SECRET_KEY='lWn6Wgp6ZhvU7UOaiDlNtg'
+
+      - DATABASE_HOST=db_deviations
+      - DATABASE_PORT=3306
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=masterroot
+      - DATABASE_NAME=mea_deviations
+
+      - API_USER=http://users-mea:5101
+      - SECRET_KEY_USER=u56nOPcT_7v_6xs0fMiwVw
+
+      - API_CCTV=http://cctvs-mea:5102
+      - TZ=Asia/Makassar
+
+    networks:
+      - kong_deviations
+      - conn_network
+    depends_on:
+      - users-mea
+      - cctvs-mea
+      - db_deviations
+    links:
+      - db_deviations:db_deviations
+    restart: always
+
+  # swagger-mea:
+  #   build:
+  #     context: ./swagger
+  #     dockerfile: Dockerfile
+  #   ports: 
+  #     - 5105:5105
+  #   restart: always
+
+  kong:
+    image: kong:latest
+    volumes:
+      - ./kong:/usr/local/kong/declarative
+    environment:
+      KONG_DATABASE: 'off'
+      KONG_DECLARATIVE_CONFIG: /usr/local/kong/declarative/kong.yml
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001, 0.0.0.0:8444 ssl
+      KONG_NGINX_HTTP_CLIENT_BODY_BUFFER_SIZE: 10M
+      KONG_NGINX_HTTP_PROXY_MAX_TEMP_FILE_SIZE: 0
+      # KONG_NGINX_HTTP_PROXY_BUFFERING: off
+      # NGINX_PROXY_BUFFERS: 1024k
+
+
+    ports:
+      - 8000:8000
+      - 8443:8443 
+      - 8001:8001
+      - 8444:8444
+    # healthcheck:
+    #   test: ["CMD", "wget", "-O-", "http://kong:8001/status"]
+    #   interval: 30s
+    #   timeout: 20s
+    #   retries: 5
+    networks:
+      - kong_cctvs
+      - kong_users
+      - kong_analytics
+      - kong_deviations
+    restart: always
+
+  db_users:
+    container_name: db-users
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=masterroot
+      - TZ=Asia/Makassar
+    ports:
+      - "33061:3306"
+    volumes:
+      - ./data/users:/docker-entrypoint-initdb.d/:ro
+      - ./data/users/sql:/var/lib/mysql
+    networks:
+      - conn_network
+    restart: always
+
+  db_cctvs:
+    container_name: db-cctvs
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=masterroot
+      - TZ=Asia/Makassar
+    ports:
+      - "33062:3306"
+    volumes:
+      - ./data/cctvs:/docker-entrypoint-initdb.d/:ro
+      - ./data/cctvs/sql:/var/lib/mysql
+    networks:
+      - conn_network
+    restart: always
+
+  db_deviations:
+    container_name: db-deviations
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=masterroot
+      - TZ=Asia/Makassar
+    ports:
+      - "33063:3306"
+    volumes:
+      - ./data/deviations:/docker-entrypoint-initdb.d/:ro
+      - ./data/deviations/sql:/var/lib/mysql
+    networks:
+      - conn_network
+    restart: always
+ 
+networks:
+  kong_users:
+  kong_cctvs:
+  kong_analytics:
+  kong_deviations:
+  conn_network:
+    driver: bridge
