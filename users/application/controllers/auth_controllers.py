@@ -5,7 +5,9 @@ from application.helper.response import response
 from werkzeug.security import generate_password_hash, check_password_hash
 from application import db
 import time
+import datetime
 import requests
+from flask import request, abort
 
 class Auth:
     @staticmethod
@@ -65,6 +67,18 @@ class Auth:
                     return response(None, message="Incorrect Password", code=422, status="error")
             else:
                 return response(None, message="Username Not Found", code=422, status="error")
+            
+    def post_logout():
+        token = None
+        if "Authorization" in request.headers:
+            token = request.headers["Authorization"].split(" ")[1]
+            try:
+                data=jwt.decode(token, os.environ.get("SECRET_KEY"), algorithms=["HS256"])
+                return response({"user_id": data["id"], "updated_at": datetime.datetime.now()}, message="Logout success", code=200, status="success")
+            except Exception as e:
+                return response(None, message="Something went wrong", code=422, status="error")
+        else:
+            return response(None, message="No Authentication token!", code=401, status="error")
 
     def login_hse(username, password):
         headers = {'x-api-key': os.environ.get("API_KEY_LOGIN")}

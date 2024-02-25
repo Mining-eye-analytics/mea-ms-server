@@ -77,3 +77,7 @@ def post_login():
     password = request.form.get('password')
     return Auth.post_login(username, password)
 
+@user_api_blueprint.route('/logout', methods=['POST'])
+@token_required
+def post_logout():
+    return Auth.post_logout()

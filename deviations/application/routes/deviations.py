@@ -46,8 +46,6 @@ def realtime_images_detail(id):
 def list_type_object():
     return deviations_controllers.type_object()
 
-
-
 @deviations_api_blueprint.route('v1', methods=["GET"])
 @User.token_required
 @User.check_access(Role.USER)
