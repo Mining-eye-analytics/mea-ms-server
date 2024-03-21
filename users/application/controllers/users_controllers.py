@@ -1,5 +1,6 @@
 from application import db
 from application.model.models import User
+from application.model.models import LoginRecord
 from application.helper.response import response, objects_to_dict
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
@@ -92,3 +93,22 @@ def delete_user(id):
     except Exception as e:
         print(e)
         return response(None, message="Failed to Delete User", code=500, status="error")
+
+def get_user_login_records(request):
+    try:
+        user_id = request.args.get('user_id')
+
+        data = db.session.query(LoginRecord)
+
+        if user_id:
+            data = data.filter(LoginRecord.user_id == user_id)
+            
+        data = data.all()
+
+        if not data:
+            return response(None, message="Tidak terdapat riwayat login yang dicari", code=200, status="success")
+        user_login_records = objects_to_dict(data)
+        
+        return response(user_login_records, message="Success get user login records", code=200, status="success")
+    except Exception as e:
+        return response(None, message="Failed get user login records", code=500, status="error")

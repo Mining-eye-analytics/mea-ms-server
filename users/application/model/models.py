@@ -19,6 +19,8 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     created_at = db.Column(db.DateTime, default=datetime.now)
     updated_at = db.Column(db.DateTime, onupdate=func.now())
+    login_at = db.Column(db.DateTime)
+    logout_at = db.Column(db.DateTime)
 
 
     def __repr__(self):
@@ -32,5 +34,25 @@ class User(db.Model):
             'role': self.role,
             'username': self.username,
             'created_at': self.created_at,
-            'updated_at': self.updated_at
+            'updated_at': self.updated_at,
+            'login_at': self.login_at,
+            'logout_at': self.logout_at
+        }
+    
+class LoginRecord(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer)
+    login_at = db.Column(db.DateTime)
+    logout_at = db.Column(db.DateTime)
+
+
+    def __repr__(self):
+        return '<User %r>' % (self.id)
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'login_at': self.login_at,
+            'logout_at': self.logout_at
         }

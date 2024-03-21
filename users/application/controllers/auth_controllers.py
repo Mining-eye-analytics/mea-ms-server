@@ -1,6 +1,7 @@
 import jwt
 import os
 from application.model.models import User
+from application.model.models import LoginRecord
 from application.helper.response import response
 from werkzeug.security import generate_password_hash, check_password_hash
 from application import db
@@ -33,9 +34,15 @@ class Auth:
 
             user = User.query.filter_by(username=username).first()
             
+            user.login_at = datetime.datetime.now()
+            user.logout_at = None
+            db.session.commit()
+
             data = user.to_json()
             data["created_at"] = str(data["created_at"])
             data["updated_at"] = str(data["updated_at"])
+            data["login_at"] = str(data["login_at"])
+            data["logout_at"] = str(data["logout_at"])
             payload = {
                 **data, 
                 "exp" : int(time.time()) + 3600*24,
@@ -51,9 +58,15 @@ class Auth:
 
             if data:
                 if check_password_hash(data.password, password):
+                    data.login_at = datetime.datetime.now()
+                    data.logout_at = None
+                    db.session.commit()
+
                     data = data.to_json()
                     data["created_at"] = str(data["created_at"])
                     data["updated_at"] = str(data["updated_at"])
+                    data["login_at"] = str(data["login_at"])
+                    data["logout_at"] = str(data["logout_at"])
                     payload = {
                         **data, 
                         "exp" : int(time.time()) + 3600*24,
@@ -61,6 +74,7 @@ class Auth:
                     }
                     token = jwt.encode(data, os.environ.get('SECRET_KEY'), algorithm="HS256")
                     data = {**data, 'token': token}
+                    
                     return response(data, message="Login success", code=200, status="success")
 
                 else:
@@ -74,7 +88,20 @@ class Auth:
             token = request.headers["Authorization"].split(" ")[1]
             try:
                 data=jwt.decode(token, os.environ.get("SECRET_KEY"), algorithms=["HS256"])
-                return response({"user_id": data["id"], "updated_at": datetime.datetime.now()}, message="Logout success", code=200, status="success")
+                user = User.query.filter_by(id=data["id"]).first()
+                login = LoginRecord.query.filter_by(user_id=data["id"], login_at=data["login_at"]).first()
+
+                user.logout_at = datetime.datetime.now()
+                db.session.commit()
+
+                new_login_data = LoginRecord(user_id=data["id"], login_at=data["login_at"], logout_at=user.logout_at)
+
+                if login is None:
+                    db.session.add(new_login_data)
+                    db.session.commit()
+
+                response_data={"user_id": data["id"], "login_at": data["login_at"], "logout_at": user.logout_at}
+                return response(response_data, message="Logout success", code=200, status="success")
             except Exception as e:
                 return response(None, message="Something went wrong", code=422, status="error")
         else:

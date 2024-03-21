@@ -187,8 +187,6 @@ def get_total_average_validation(request):
 
             last_week_day_average.append(count)
 
-        print(this_week_day_average, last_week_day_average)
-
         for item in deviations:
             if endDate <= item["created_at"] <= startDate:                
                 total_average_validation["this_week"]["total"] += 1

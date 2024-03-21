@@ -70,6 +70,12 @@ def action_user(id):
 def get_username(username):
     return users_controllers.get_username(username)
 
+@user_api_blueprint.route('user_records', methods=['GET'])
+@token_required
+@check_access(Role.USER)
+def get_user_login_records():
+    return users_controllers.get_user_login_records(request)
+
 
 @user_api_blueprint.route('/login', methods=['POST'])
 def post_login():
